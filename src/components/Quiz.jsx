@@ -1,5 +1,6 @@
 import { useState } from "react";
 import QUESTIONS from "../questions";
+import quizCompleteImg from "../assets/quiz-complete.png";
 
 export default function Quiz() {
     const [userAnswers, setUserAnswers] = useState([]);
@@ -7,6 +8,7 @@ export default function Quiz() {
     // if the initial state is an empty array (0), so the activeQuestionIndex will be 0
     // so it will be the first question which we wanna show to the user
     const activeQuestionIndex = userAnswers.length;
+    const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
     function handleSelectAnswer(selectedAnswer) {
         setUserAnswers((prevUserAnswers) => {
@@ -14,12 +16,24 @@ export default function Quiz() {
         });
     }
 
+    if (quizIsComplete) {
+        return (
+            <div id="summary">
+                <img src={quizCompleteImg} alt="Trophy icon" />
+                <h2>Quiz completed!</h2>
+            </div>
+        );
+    }
+
+    const shuffleAnswers = [...QUESTIONS[activeQuestionIndex].answers];
+    shuffleAnswers.sort(() => Math.random() - 0.5);
+
     return (
         <div id="quiz">
             <div id="question">
                 <h2>{QUESTIONS[activeQuestionIndex].text}</h2>
                 <ul id="answers">
-                    {QUESTIONS[activeQuestionIndex].answers.map((answer) => (
+                    {shuffleAnswers.map((answer) => (
                         <li key={answer} className="answer">
                             <button onClick={() => handleSelectAnswer(answer)}>
                                 {answer}
